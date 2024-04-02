@@ -1,9 +1,10 @@
 import Container from "../../../components/shared/Container";
 import SignUpForm from "./SignUpForm";
+import BgRasm from '../../../assets/Rectangle 2.png'
 
 const SignUp = () => {
   return (
-    <div className="bg-white orqa">
+    <div className="bg-white" style={{backgroundImage: `url(${BgRasm})`,  backgroundRepeat: 'no-repeat'}}>
       <div className="flex justify-center items-center h-screen">
         <Container>
           <div className="w-[35%] mx-auto bg-white p-8 rounded-[12px]" style={{boxShadow: "0px 4px 32px 0px #3333330A"}}>
