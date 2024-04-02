@@ -1,13 +1,10 @@
-
-
 import axios from "axios";
 import CryptoJS from "crypto-js";
-
-const BASE_URL = "https://no23.lavina.tech";
+import appConfig from "../configs/app.config";
 
 axios.interceptors.request.use((config) => {
   try {
-    config.baseURL = BASE_URL;
+    config.baseURL = appConfig.apiPrefix;
     const method = config.method?.toUpperCase();
 
     const url = config.url;

@@ -5,7 +5,7 @@ import Book from '../components/bookcard/bookcard';
 
 const Home = () => {
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [setLoading] = useState(true);
   const [books, setBooks] = useState(null);
   const [errorMessage, setErrorMessage] = useState(false);
   const [isbn, setIsbn] = useState('');
