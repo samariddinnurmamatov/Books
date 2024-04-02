@@ -2,44 +2,38 @@ import axios from "axios";
 import CryptoJS from "crypto-js";
 import appConfig from "../configs/app.config";
 
-axios.interceptors.request.use((config) => {
-  try {
-    config.baseURL = appConfig.apiPrefix;
-    const method = config.method?.toUpperCase();
+const { apiPrefix } = appConfig;
+const localStorageKey = "key";
+const localStorageSecret = "secret";
 
-    const url = config.url;
-    let requestBody;
-    if(config.data?.secret) {
-      requestBody = "";
-    } else {
-      requestBody = config.data || "";
-    }
+const generateSignature = ({ method, url, data, secret }) =>
+  CryptoJS.MD5(method + url + (data?.secret ? "" : data || "") + secret).toString();
 
-    let signstr = "";
-    let key = localStorage.getItem("key");
-    if (!key && config.headers.key) {
-      key = config.headers.key;
-    }
+const updateHeaders = (config) => {
+  const { method, url, data, headers } = config;
+  const key = localStorage.getItem(localStorageKey) || headers.key || "";
+  const secret = localStorage.getItem(localStorageSecret) || data.secret || "";
 
-    let secret = localStorage.getItem("secret");
-    if(!secret && config.data.secret) {
-      secret = config.data.secret;
-    }
-
-    if (method && url && url !== "/signup") {
-      signstr = method + url + requestBody + secret;
-
-      config.headers.key = key;
-      config.headers.sign = CryptoJS.MD5(signstr).toString();
-    } else {
-      localStorage.setItem("secret", config.data?.secret);
-      localStorage.setItem("key", config.data?.key);
-    }
-
-    return config;
-  } catch (e) {
-    return Promise.reject(e);
+  if (method && url && url !== "/signup") {
+    config.headers = {
+      ...config.headers,
+      key,
+      sign: generateSignature({ method: method.toUpperCase(), url, data, secret }),
+    };
+  } else {
+    localStorage.setItem(localStorageSecret, data?.secret || "");
+    localStorage.setItem(localStorageKey, data?.key || "");
   }
-});
+
+  return config;
+};
+
+axios.interceptors.request.use(
+  (config) => {
+    config.baseURL = apiPrefix;
+    return updateHeaders(config);
+  },
+  (error) => Promise.reject(error)
+);
 
 export default axios;

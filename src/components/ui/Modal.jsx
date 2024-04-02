@@ -4,6 +4,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import TextField from '@material-ui/core/TextField';
 import axios from "../../services/AuthService";
+import { toast } from "react-toastify";
+import { useState } from "react";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -24,10 +26,24 @@ const useStyles = makeStyles((theme) => ({
     border: "1.8px solid black",
     padding: "3.9px 3.9px"
   },
+  submitButton: {
+    width: '100%',
+    borderRadius: '4px',
+    border: '1px solid #6200EE',
+    background: '#6200EE',
+    color: 'white',
+    cursor: 'pointer',
+    '&:disabled': {
+      background: 'gray',
+      color: 'white',
+      cursor: 'not-allowed',
+    },
+  },
 }));
 
 const ModalComponent = ({ open, handleClose, createBook, isbn, setIsbn }) => {
   const classes = useStyles();
+  const [isLoading, setIsLoading] = useState(false); // 1. Isloading holatini saqlash
 
   const handleIsbnChange = (e) => {
     setIsbn(e.target.value);
@@ -35,21 +51,23 @@ const ModalComponent = ({ open, handleClose, createBook, isbn, setIsbn }) => {
 
   const submit = async (e) => {
     e.preventDefault();
-    await sendCreate(isbn);
-    // Inputni tozalash
+    setIsLoading(true); // 2. Submit bosilganda isLoading ni true qiling
+    await Create(isbn);
+    setIsLoading(false); // 3. Yuklash tugaganidan so'ng isLoading ni false qiling
     setIsbn('');
   };  
 
-  const sendCreate = async (isbn) => {
+  const Create = async (isbn) => {
     const bookData = JSON.stringify({ isbn });
 
     try {
-      const response = await axios.post("/books", bookData);
-      createBook(response.data.data);
-      handleClose();
+        const response = await axios.post("/books", bookData);
+        createBook(response.data.data);
+        toast.success('Book added successfully', {position: "bottom-right",}); 
+        handleClose();
     } catch (e) {
-      console.log(e);
-      throw new Error();
+        toast.error('Error adding book', {position: "bottom-right",}); 
+        throw new Error();
     }
   };
 
@@ -78,7 +96,7 @@ const ModalComponent = ({ open, handleClose, createBook, isbn, setIsbn }) => {
         </div>
         <div className='flex gap-3 pt-5'>
           <button className='w-[100%] py-1.5 rounded-[4px]' style={{border: "1px solid #6200EE", color: "#6200EE"}} onClick={handleClose}>Close</button>
-          <button className='w-[100%] py-1.5 rounded-[4px' style={{border: "1px solid #6200EE", background: "#6200EE", color: "white"}} onClick={submit}>Submit</button>
+          <button className={classes.submitButton} onClick={submit} disabled={isLoading}>Submit</button>
         </div>
       </div>
     </Modal>

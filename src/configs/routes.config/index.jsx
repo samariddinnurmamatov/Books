@@ -20,7 +20,12 @@ const routesConfig = [
     //   { path: '/expr', element: lazy(() => import("../../views/Expr")) },
     //   { path: '/kitob', element: lazy(() => import("../../views/kitob")) },
     ],
-  }
+  },
+  {
+    key: "notFound",
+    path: '/*', // Match any path that hasn't been matched yet
+    element: React.lazy(() => import("../../views/NotFound/NotFound")),
+  },
 ];
 
 export default routesConfig;

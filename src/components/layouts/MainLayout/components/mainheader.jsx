@@ -31,7 +31,7 @@ const Mainheader = () => {
       <header className="flex justify-between items-center py-5">
         <div className="flex gap-5 w-[40%]">
           <img src={Logo} alt="Logo" />
-          <input className="px-[10px]" type="text" placeholder="Search for any training you want" style={{width: "100%", fontSize: "15px", background: "transparent"}} />
+          <input className="px-[10px] text-white" type="text" placeholder="Search for any training you want" style={{width: "100%", fontSize: "15px", background: "transparent"}} />
         </div>
         <div className="flex items-center gap-5">
           <img src={Frame} alt="Frame" />

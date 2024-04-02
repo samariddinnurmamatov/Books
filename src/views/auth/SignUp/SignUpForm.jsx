@@ -4,6 +4,7 @@ import { TextField, CircularProgress, Button } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import axios from '../../../services/AuthService';
 import Circle from '../../../assets/x-circle.png'
+import { toast } from 'react-toastify';
 
 const SignInForm = () => {
   const [formData, setFormData] = useState({
@@ -57,10 +58,15 @@ const SignInForm = () => {
         localStorage.setItem("key", response.data.data.key);
         localStorage.setItem("secret", response.data.data.secret);
         localStorage.setItem("USER", JSON.stringify(response.data.data));
+        toast.success('User registered successfully!', {position: "bottom-right",});
         navigate("/main")
+      } else {
+        toast.error('Error registering user: ', {position: "bottom-right",} + response.data.message);
       }
     } catch (error) {
-      console.log(error);
+      toast.error('Sign Up Error:', {position: "bottom-right",}, error);
+    } finally {
+      setLoading(false);
     }
   };
 
